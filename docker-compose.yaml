@@ -1,0 +1,55 @@
+version: "3"
+
+services:
+  history_db:
+    image: postgres:15-alpine
+    container_name: subscription_service_history_db
+    restart: unless-stopped
+    env_file: .env
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    volumes:
+      - "history:/var/lib/postgresql/data"
+    ports:
+      - 5435:5432
+  db:
+    image: redis:7-alpine
+    container_name: subscription_service_db
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 1s
+      timeout: 3s
+      retries: 5
+    volumes:
+      - "db:/data"
+    ports:
+      - 6381:6379
+  subscription_service:
+    image: subscription-service:latest
+    build:
+      context: .
+      dockerfile: build/service/Dockerfile
+    container_name: subscription_service
+    restart: unless-stopped
+    env_file: .env
+    ports:
+      - "${APP_PORT}:${APP_PORT}"
+    depends_on:
+      db:
+        condition: service_healthy
+      history_db:
+        condition: service_healthy
+
+volumes:
+  history:
+  db:
+
+networks:
+  default:
+    name: sportiq
+    external: true
