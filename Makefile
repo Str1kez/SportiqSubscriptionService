@@ -2,7 +2,7 @@
 .SILENT:
 
 env:
-	cp .env.example .env
+	cp .example.env .env
 build:
 	go build -o .bin/subscription-service cmd/subscription-service/main.go
 run: build

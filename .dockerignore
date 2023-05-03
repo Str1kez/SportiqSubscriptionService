@@ -1,6 +1,6 @@
 **/.env
-**/.env.example
-**/.env.dev
+**/.example.env
+**/.dev.env
 .bin
 .git
 migrations
