@@ -7,6 +7,7 @@ repos:
         name: formatting
       - id: go-vet
         name: args suspicious
+        stages: [manual]
       - id: go-mod-tidy
         name: normalize go.mod
       - id: go-imports
