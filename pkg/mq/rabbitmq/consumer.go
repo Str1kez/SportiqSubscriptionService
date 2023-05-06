@@ -9,11 +9,15 @@ func (r *RabbitMQ) Consume(autoAck bool) {
 	if err != nil {
 		log.Panicf("Couldn't init consumer: %v\n", err)
 	}
+
 	var worker chan struct{}
+	log.Infof("Consumer №%d is receiving messages on queue [%s]\n", r.id, r.queue.Name)
 
 	go func() {
 		for d := range messages {
-			log.Debugf("Received a message: %s", d.Body)
+			log.Debugf("Consumer №%d received a message: %s\n", r.id, d.Body)
+			// TODO: business
+			log.Debugf("Done by consumer №%d\n", r.id)
 			d.Ack(false)
 		}
 	}()

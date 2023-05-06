@@ -30,10 +30,11 @@ type DBConfig struct {
 }
 
 type MQConfig struct {
-	Host     string `mapstructure:"RABBITMQ_HOST"`
-	Port     string `mapstructure:"RABBITMQ_PORT"`
-	User     string `mapstructure:"RABBITMQ_DEFAULT_USER"`
-	Password string `mapstructure:"RABBITMQ_DEFAULT_PASS"`
+	ConsumerCount uint8  `mapstructure:"CONSUMER_COUNT"`
+	Host          string `mapstructure:"RABBITMQ_HOST"`
+	Port          string `mapstructure:"RABBITMQ_PORT"`
+	User          string `mapstructure:"RABBITMQ_DEFAULT_USER"`
+	Password      string `mapstructure:"RABBITMQ_DEFAULT_PASS"`
 }
 
 // type ErrorConfig struct {
@@ -121,6 +122,9 @@ func parseEnv() error {
 		return err
 	}
 	if err := viper.BindEnv("RABBITMQ_DEFAULT_PASS"); err != nil {
+		return err
+	}
+	if err := viper.BindEnv("CONSUMER_COUNT"); err != nil {
 		return err
 	}
 	return nil

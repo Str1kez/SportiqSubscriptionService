@@ -9,17 +9,19 @@ import (
 )
 
 type RabbitMQ struct {
+	id         uint8
 	connection *amqp.Connection
 	channel    *amqp.Channel
 	queue      *amqp.Queue
 }
 
-func NewRabbitMQ(config *config.MQConfig) *RabbitMQ {
+func NewRabbitMQ(config *config.MQConfig, id uint8) *RabbitMQ {
 	connection, err := amqp.Dial(fmt.Sprintf("amqp://%s:%s@%s:%s/", config.User, config.Password, config.Host, config.Port))
 	if err != nil {
 		log.Fatalf("Couldn't connect to RabbitMQ: %v\n", err)
 	}
-	return &RabbitMQ{connection: connection}
+	log.Infof("Consumer №%d connected\n", id)
+	return &RabbitMQ{connection: connection, id: id}
 }
 
 func (r *RabbitMQ) OpenChannel() {
