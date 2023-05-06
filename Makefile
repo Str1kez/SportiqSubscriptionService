@@ -3,20 +3,26 @@
 
 env:
 	cp .example.env .env
-build:
-	go build -o .bin/subscription-service cmd/subscription-service/main.go
-run: build
-	.bin/subscription-service
+build-server:
+	go build -o .bin/subscription-server cmd/subscription-server/main.go
+run-server: build-server
+	.bin/subscription-server
+build-handler:
+	go build -o .bin/subscription-message-handler cmd/subscription-message-handler/main.go
+run-handler: build-handler
+	.bin/subscription-message-handler
 
 upgrade:
-	export $$(cat .env.dev); migrate -database "postgres://$$POSTGRES_USER:$$POSTGRES_PASSWORD@$$POSTGRES_HOST:$$POSTGRES_PORT/$$POSTGRES_DB" -path ./migrations up
+	export $$(cat .dev.env); migrate -database "postgres://$$POSTGRES_USER:$$POSTGRES_PASSWORD@$$POSTGRES_HOST:$$POSTGRES_PORT/$$POSTGRES_DB" -path ./migrations up
 downgrade:
-	export $$(cat .env.dev); migrate -database "postgres://$$POSTGRES_USER:$$POSTGRES_PASSWORD@$$POSTGRES_HOST:$$POSTGRES_PORT/$$POSTGRES_DB" -path ./migrations down
+	export $$(cat .dev.env); migrate -database "postgres://$$POSTGRES_USER:$$POSTGRES_PASSWORD@$$POSTGRES_HOST:$$POSTGRES_PORT/$$POSTGRES_DB" -path ./migrations down
 
 db history:
 	docker compose up -d --remove-orphans $@
-build-image:
-	docker build . -t subscription-service -f build/service/Dockerfile
+build-image-server:
+	docker build . -t subscription-server -f build/server/Dockerfile
+build-image-handler:
+	docker build . -t subscription-message-handler -f build/handler/Dockerfile
 up:
 	docker compose up -d --remove-orphans
 down:

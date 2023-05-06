@@ -15,6 +15,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Couldn't initialize config: %v\n", err)
 	}
+	// TODO: НАПИСАТЬ ЛОГИКУ ДЛЯ ПЕРЕХВАТА ПАНИК С ЗАКРЫТИЕМ CONSUMER
 	log.Infoln("Config has been parsed")
 	log.Infoln(cfg.Server.Host)
 	rdb := redis.NewClient(&redis.Options{

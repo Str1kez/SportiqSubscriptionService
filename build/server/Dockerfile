@@ -8,7 +8,7 @@ COPY . .
 
 RUN go mod download
 
-RUN go build -o ./.bin/app ./cmd/subscription-service/main.go
+RUN go build -o ./.bin/app ./cmd/subscription-server/main.go
 
 FROM alpine:3.17
 

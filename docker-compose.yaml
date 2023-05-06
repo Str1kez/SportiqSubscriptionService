@@ -29,15 +29,30 @@ services:
       - "db:/data"
     ports:
       - 6381:6379
-  subscription_service:
-    image: subscription-service:latest
+  subscription_server:
+    image: subscription-server:latest
     build:
       context: .
-      dockerfile: build/service/Dockerfile
-    container_name: subscription_service
+      dockerfile: build/server/Dockerfile
+    container_name: subscription_server
     restart: unless-stopped
     env_file: .env
     ports:
+      - "${APP_PORT}:${APP_PORT}"
+    depends_on:
+      db:
+        condition: service_healthy
+      history_db:
+        condition: service_healthy
+  subscription_message_handler:
+    image: subscription-message-handler:latest
+    build:
+      context: .
+      dockerfile: build/handler/Dockerfile
+    container_name: subscription_message_handler
+    restart: unless-stopped
+    env_file: .env
+    ports:  # TODO: надо ли?
       - "${APP_PORT}:${APP_PORT}"
     depends_on:
       db:

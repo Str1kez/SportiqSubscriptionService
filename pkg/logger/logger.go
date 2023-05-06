@@ -15,7 +15,6 @@ func callerPrettyfier(frame *runtime.Frame) (function string, file string) {
 }
 
 func InitLogger() {
-	log.SetOutput(os.Stdout)
 	if os.Getenv("GIN_MODE") == "release" {
 		log.SetFormatter(&log.JSONFormatter{CallerPrettyfier: callerPrettyfier})
 		log.SetLevel(log.WarnLevel)
@@ -23,4 +22,6 @@ func InitLogger() {
 		log.SetFormatter(&log.TextFormatter{FullTimestamp: true, CallerPrettyfier: callerPrettyfier})
 		log.SetLevel(log.DebugLevel)
 	}
+	log.SetReportCaller(true)
+	log.SetOutput(os.Stdout)
 }
