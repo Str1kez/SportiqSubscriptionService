@@ -1,6 +1,9 @@
-package consumer
+package mq
 
-import "github.com/Str1kez/SportiqSubscriptionService/internal/config"
+import (
+	"github.com/Str1kez/SportiqSubscriptionService/internal/config"
+	"github.com/Str1kez/SportiqSubscriptionService/pkg/mq/rabbitmq"
+)
 
 type Consumer interface {
 	OpenChannel()
@@ -15,6 +18,6 @@ type MQConsumer struct {
 
 func InitMQConsumer(config *config.MQConfig) *MQConsumer {
 	return &MQConsumer{
-		// NewRabbitMQ(config),
+		rabbitmq.NewRabbitMQ(config),
 	}
 }
