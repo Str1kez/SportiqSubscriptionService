@@ -1,7 +1,7 @@
 version: "3"
 
 services:
-  history_db:
+  history:
     image: postgres:15-alpine
     container_name: subscription_service_history_db
     restart: unless-stopped
@@ -43,7 +43,7 @@ services:
     depends_on:
       db:
         condition: service_healthy
-      history_db:
+      history:
         condition: service_healthy
   subscription_message_handler:
     image: subscription-message-handler:latest
@@ -58,7 +58,7 @@ services:
     depends_on:
       db:
         condition: service_healthy
-      history_db:
+      history:
         condition: service_healthy
 
 volumes:

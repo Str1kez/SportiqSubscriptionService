@@ -13,9 +13,9 @@ run-handler: build-handler
 	.bin/subscription-message-handler
 
 upgrade:
-	export $$(cat .dev.env); migrate -database "postgres://$$POSTGRES_USER:$$POSTGRES_PASSWORD@$$POSTGRES_HOST:$$POSTGRES_PORT/$$POSTGRES_DB" -path ./migrations up
+	export $$(cat .dev.env); migrate -database "postgres://$$POSTGRES_USER:$$POSTGRES_PASSWORD@$$POSTGRES_HOST:$$POSTGRES_PORT/$$POSTGRES_DB?sslmode=disable" -path ./migrations up
 downgrade:
-	export $$(cat .dev.env); migrate -database "postgres://$$POSTGRES_USER:$$POSTGRES_PASSWORD@$$POSTGRES_HOST:$$POSTGRES_PORT/$$POSTGRES_DB" -path ./migrations down
+	export $$(cat .dev.env); migrate -database "postgres://$$POSTGRES_USER:$$POSTGRES_PASSWORD@$$POSTGRES_HOST:$$POSTGRES_PORT/$$POSTGRES_DB?sslmode=disable" -path ./migrations down
 
 db history:
 	docker compose up -d --remove-orphans $@
