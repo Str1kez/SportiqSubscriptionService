@@ -7,8 +7,9 @@ import (
 )
 
 type history interface {
-	Close() error
 	Create(eventId, title, userId string, isDeleted bool) (*responses.HistoryResponse, error)
+	Get(userId string) ([]*responses.HistoryResponse, error)
+	Close() error
 }
 
 type HistoryDB struct {

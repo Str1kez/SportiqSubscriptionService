@@ -49,3 +49,31 @@ func (p *PostgresHistory) Create(eventId, title, userId string, isDeleted bool) 
 
 	return &responses.HistoryResponse{EventId: eventId, UserId: userId, EventTitle: title, IsDeleted: isDeleted}, nil
 }
+
+func (p *PostgresHistory) Get(userId string) ([]*responses.HistoryResponse, error) {
+	row_query := `SELECT %s.id AS id, title, is_deleted 
+                FROM %s 
+                JOIN %s ON %s.event_id = %s.id 
+                WHERE %s.user_id = $1 
+                ORDER BY %s.created_at DESC;`
+	query := fmt.Sprintf(row_query, eventTablename, eventTablename, sharedTablename,
+		sharedTablename, eventTablename, sharedTablename, eventTablename)
+	rows, err := p.connection.Queryx(query, userId)
+	if err != nil {
+		log.Errorf("Couldn't get rows: %v\n", err)
+		return nil, err
+	}
+	defer rows.Close()
+
+	// ! Неоптимально, лучше сделать через транзакцию с проверкой на кол-во строк
+	response := make([]*responses.HistoryResponse, 0, 100)
+	for rows.Next() {
+		var temp responses.HistoryResponse
+		if err := rows.StructScan(&temp); err != nil {
+			log.Errorf("Can't parse row: %v\n", err)
+			return nil, err
+		}
+		response = append(response, &temp)
+	}
+	return response, nil
+}
