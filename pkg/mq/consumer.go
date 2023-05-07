@@ -2,6 +2,7 @@ package mq
 
 import (
 	"github.com/Str1kez/SportiqSubscriptionService/internal/config"
+	"github.com/Str1kez/SportiqSubscriptionService/pkg/db"
 	"github.com/Str1kez/SportiqSubscriptionService/pkg/mq/rabbitmq"
 	log "github.com/sirupsen/logrus"
 )
@@ -17,14 +18,18 @@ type MQConsumer struct {
 	Consumer
 }
 
-func InitMQConsumer(config *config.MQConfig) []*MQConsumer {
+func InitMQConsumer(id uint8, config *config.MQConfig, subscriptionDB *db.SubscriptionDB) *MQConsumer {
+	return &MQConsumer{rabbitmq.NewRabbitMQ(id, config, subscriptionDB)}
+}
+
+func InitMQConsumerSlice(config *config.MQConfig, subscriptionDBs []*db.SubscriptionDB) []*MQConsumer {
 	if config.ConsumerCount == 0 {
 		log.Errorln("Zero consumers declared")
 	}
 	var i uint8
 	consumerSlice := make([]*MQConsumer, 0, config.ConsumerCount)
 	for i = 0; i < config.ConsumerCount; i++ {
-		consumerSlice = append(consumerSlice, &MQConsumer{rabbitmq.NewRabbitMQ(config, i)})
+		consumerSlice = append(consumerSlice, InitMQConsumer(i, config, subscriptionDBs[i]))
 	}
 	return consumerSlice
 }

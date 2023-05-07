@@ -17,7 +17,7 @@ services:
     ports:
       - 5435:5432
   db:
-    image: redis:7-alpine
+    image: redis/redis-stack:latest  # TODO: Заменить на сервер
     container_name: subscription_service_db
     restart: unless-stopped
     healthcheck:
@@ -29,6 +29,7 @@ services:
       - "db:/data"
     ports:
       - 6381:6379
+      - 8010:8001  # TODO: Убрать после использования сервера
   subscription_server:
     image: subscription-server:latest
     build:

@@ -2,16 +2,16 @@ package main
 
 import (
 	"github.com/Str1kez/SportiqSubscriptionService/internal/config"
+	"github.com/Str1kez/SportiqSubscriptionService/pkg/db"
 	"github.com/Str1kez/SportiqSubscriptionService/pkg/logger"
 	"github.com/Str1kez/SportiqSubscriptionService/pkg/mq"
-	"github.com/nitishm/go-rejson/v4"
-	"github.com/redis/go-redis/v9"
 	log "github.com/sirupsen/logrus"
 )
 
-func handlePanic(consumers ...*mq.MQConsumer) {
+func handlePanic(consumers []*mq.MQConsumer, subscriptionDBInstances []*db.SubscriptionDB) {
 	if r := recover(); r != nil {
 		mq.GracefulShutdown(consumers...)
+		db.GracefulShutdown(subscriptionDBInstances...)
 		log.Fatalf("Failed by panic: %v\n", r)
 	}
 }
@@ -23,17 +23,12 @@ func main() {
 	if err != nil {
 		log.Fatalf("Couldn't initialize config: %v\n", err)
 	}
-	consumers := mq.InitMQConsumer(cfg.MQ)
-	defer handlePanic(consumers...)
+	subscriptionDBInstances := db.NewSubscriptionDBSlice(cfg.DB, cfg.MQ.ConsumerCount)
+	consumers := mq.InitMQConsumerSlice(cfg.MQ, subscriptionDBInstances)
+	defer handlePanic(consumers, subscriptionDBInstances)
 
 	mq.HandleMessages(consumers...)
 
+	// TODO: Add graceful shutdown on SIGINT
 	log.Debugln("checking availability")
-	rdb := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
-		Password: "", // no password set
-		DB:       0,  // use default DB
-	})
-	rh := rejson.NewReJSONHandler()
-	rh.SetGoRedisClient(rdb)
 }
