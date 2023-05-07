@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/Str1kez/SportiqSubscriptionService/internal/config"
-	"github.com/Str1kez/SportiqSubscriptionService/pkg/db"
+	"github.com/Str1kez/SportiqSubscriptionService/internal/db"
 	amqp "github.com/rabbitmq/amqp091-go"
 	log "github.com/sirupsen/logrus"
 )

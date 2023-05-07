@@ -2,11 +2,14 @@ package db
 
 import (
 	"github.com/Str1kez/SportiqSubscriptionService/internal/config"
-	"github.com/Str1kez/SportiqSubscriptionService/pkg/db/redisjson"
+	"github.com/Str1kez/SportiqSubscriptionService/internal/db/redisjson"
 	log "github.com/sirupsen/logrus"
 )
 
 type subscription interface {
+	DeleteEvent(eventId string) error
+	CreateEvent(eventId, userId string) error
+	UpdateEventStatus(eventId, eventStatus string) error
 	Close() error
 }
 

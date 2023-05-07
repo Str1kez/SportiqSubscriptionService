@@ -2,7 +2,7 @@ package mq
 
 import (
 	"github.com/Str1kez/SportiqSubscriptionService/internal/config"
-	"github.com/Str1kez/SportiqSubscriptionService/pkg/db"
+	"github.com/Str1kez/SportiqSubscriptionService/internal/db"
 	"github.com/Str1kez/SportiqSubscriptionService/pkg/mq/rabbitmq"
 	log "github.com/sirupsen/logrus"
 )

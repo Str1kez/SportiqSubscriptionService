@@ -6,10 +6,10 @@ import (
 )
 
 type Config struct {
-	Server    *ServerConfig
-	HistoryDB *HistoryDBConfig
-	DB        *DBConfig
-	MQ        *MQConfig
+	Server    ServerConfig
+	HistoryDB HistoryDBConfig
+	DB        DBConfig
+	MQ        MQConfig
 }
 
 type ServerConfig struct {
@@ -26,7 +26,8 @@ type HistoryDBConfig struct {
 }
 
 type DBConfig struct {
-	Url string `mapstructure:"DB_SUB_URL"`
+	Url         string      `mapstructure:"DB_SUB_URL"`
+	EventStatus EventStatus `mapstructure:"status"`
 }
 
 type MQConfig struct {
@@ -35,6 +36,13 @@ type MQConfig struct {
 	Port          string `mapstructure:"RABBITMQ_PORT"`
 	User          string `mapstructure:"RABBITMQ_DEFAULT_USER"`
 	Password      string `mapstructure:"RABBITMQ_DEFAULT_PASS"`
+}
+
+type EventStatus struct {
+	Deleted   string `mapstructure:"deleted"`
+	Planned   string `mapstructure:"planned"`
+	Completed string `mapstructure:"completed"`
+	Underway  string `mapstructure:"underway"`
 }
 
 // type ErrorConfig struct {
@@ -77,6 +85,17 @@ func NewConfig() (*Config, error) {
 	err = viper.Unmarshal(&config.HistoryDB)
 	if err != nil {
 		log.Errorf("Error in unmarshalling env data: %v\n", err)
+		return nil, err
+	}
+
+	err = parseConfig()
+	if err != nil {
+		log.Errorf("Error in parsing yaml config: %v\n", err)
+		return nil, err
+	}
+	err = viper.Unmarshal(&config.DB)
+	if err != nil {
+		log.Errorf("Error in unmarshalling yaml config: %v\n", err)
 		return nil, err
 	}
 
@@ -128,4 +147,10 @@ func parseEnv() error {
 		return err
 	}
 	return nil
+}
+
+func parseConfig() error {
+	viper.SetConfigName("event")
+	viper.AddConfigPath("config")
+	return viper.ReadInConfig()
 }

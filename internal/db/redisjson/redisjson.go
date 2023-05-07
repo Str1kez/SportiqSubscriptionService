@@ -12,6 +12,7 @@ import (
 type ReJSONDB struct {
 	client  *redis.Client
 	handler *rejson.Handler
+	config  *config.DBConfig
 }
 
 func NewReJSONDB(config *config.DBConfig) *ReJSONDB {
@@ -20,7 +21,7 @@ func NewReJSONDB(config *config.DBConfig) *ReJSONDB {
 	})
 	rejsonHandler := rejson.NewReJSONHandler()
 	rejsonHandler.SetGoRedisClient(redisClient)
-	instance := &ReJSONDB{client: redisClient, handler: rejsonHandler}
+	instance := &ReJSONDB{client: redisClient, handler: rejsonHandler, config: config}
 	instance.healthCheck()
 	return instance
 }

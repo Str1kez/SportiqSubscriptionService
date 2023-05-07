@@ -1,0 +1,5 @@
+status:
+  deleted: "Удалено"
+  planned: "Запланировано"
+  completed: "Завершено"
+  underway: "Идет"
