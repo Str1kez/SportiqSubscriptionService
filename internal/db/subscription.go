@@ -17,18 +17,18 @@ type SubscriptionDB struct {
 	subscription
 }
 
-func NewSubscriptionDB(config *config.DBConfig) *SubscriptionDB {
+func InitSubscriptionDB(config *config.DBConfig) *SubscriptionDB {
 	return &SubscriptionDB{subscription: redisjson.NewReJSONDB(config)}
 }
 
-func NewSubscriptionDBSlice(config *config.DBConfig, instanceCount uint8) []*SubscriptionDB {
+func InitSubscriptionDBSlice(config *config.DBConfig, instanceCount uint8) []*SubscriptionDB {
 	if instanceCount == 0 {
 		log.Errorln("Zero instances declared")
 	}
 	var i uint8
 	instanceSlice := make([]*SubscriptionDB, 0, instanceCount)
 	for i = 0; i < instanceCount; i++ {
-		instanceSlice = append(instanceSlice, NewSubscriptionDB(config))
+		instanceSlice = append(instanceSlice, InitSubscriptionDB(config))
 	}
 	return instanceSlice
 }

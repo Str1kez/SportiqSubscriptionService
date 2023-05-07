@@ -33,7 +33,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Couldn't initialize config: %v\n", err)
 	}
-	subscriptionDBInstances := db.NewSubscriptionDBSlice(&cfg.DB, cfg.MQ.ConsumerCount)
+	subscriptionDBInstances := db.InitSubscriptionDBSlice(&cfg.DB, cfg.MQ.ConsumerCount)
 	consumers := mq.InitMQConsumerSlice(&cfg.MQ, subscriptionDBInstances)
 	defer handlePanic(consumers, subscriptionDBInstances)
 

@@ -3,6 +3,7 @@ module github.com/Str1kez/SportiqSubscriptionService
 go 1.20
 
 require (
+	github.com/jmoiron/sqlx v1.3.5
 	github.com/nitishm/go-rejson/v4 v4.1.1-0.20230331060235-d2aa875760e4
 	github.com/rabbitmq/amqp091-go v1.8.1
 	github.com/redis/go-redis/v9 v9.0.4
