@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS event (
   id UUID PRIMARY KEY,
-  title TEXT NOT NULL,
+  title TEXT,
   is_deleted BOOLEAN DEFAULT FALSE,
   created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW());
 CREATE INDEX IF NOT EXISTS idx__event__title ON event(title);
