@@ -5,6 +5,7 @@ import (
 
 	"github.com/Str1kez/SportiqSubscriptionService/internal/config"
 	"github.com/Str1kez/SportiqSubscriptionService/internal/db"
+	"github.com/Str1kez/SportiqSubscriptionService/internal/history"
 	amqp "github.com/rabbitmq/amqp091-go"
 	log "github.com/sirupsen/logrus"
 )
@@ -15,19 +16,17 @@ type RabbitMQ struct {
 	channel        *amqp.Channel
 	queue          *amqp.Queue
 	subscriptionDB *db.SubscriptionDB
-	// TODO: ADD HISTORY DB (interface)
+	historyDB      *history.HistoryDB
 }
 
-func NewRabbitMQ(id uint8, config *config.MQConfig, subscriptionDB *db.SubscriptionDB) *RabbitMQ {
+func NewRabbitMQ(id uint8, config *config.MQConfig, subscriptionDB *db.SubscriptionDB, historyDB *history.HistoryDB) *RabbitMQ {
 	connection, err := amqp.Dial(fmt.Sprintf("amqp://%s:%s@%s:%s/", config.User, config.Password, config.Host, config.Port))
 	if err != nil {
 		log.Fatalf("Couldn't connect to RabbitMQ: %v\n", err)
 	}
 	log.Infof("Consumer №%d connected\n", id)
-	return &RabbitMQ{connection: connection, id: id, subscriptionDB: subscriptionDB}
+	return &RabbitMQ{connection: connection, id: id, subscriptionDB: subscriptionDB, historyDB: historyDB}
 }
-
-// TODO: Bind HistoryDB
 
 func (r *RabbitMQ) OpenChannel() {
 	channel, err := r.connection.Channel()
@@ -62,6 +61,5 @@ func (r *RabbitMQ) Close() error {
 			return err
 		}
 	}
-	// TODO: Close HistoryDB
 	return nil
 }

@@ -16,6 +16,14 @@ func (r *RabbitMQ) Consume(autoAck bool) {
 	go func() {
 		for d := range messages {
 			log.Debugf("Consumer №%d received a message: %s\n", r.id, d.Body)
+			switch d.Type {
+			case "event.create":
+			case "event.change":
+			case "event.complete":
+			case "event.delete":
+			default:
+				log.Errorf("Unrecognized type of message: %s\n", d.Type)
+			}
 			// TODO: business
 			log.Debugf("Done by consumer №%d\n", r.id)
 			d.Ack(false)
