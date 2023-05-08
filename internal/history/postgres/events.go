@@ -13,41 +13,43 @@ const (
 	sharedTablename = "event_user"
 )
 
-func (p *PostgresHistory) Create(eventId, title, userId string, isDeleted bool) (*responses.HistoryResponse, error) {
+func (p *PostgresHistory) Create(eventId string, title interface{}, usersId []string, isDeleted bool) error {
 	queryEvent := fmt.Sprintf(`INSERT INTO %s (id, title, is_deleted) VALUES($1, $2, $3)`, eventTablename)
-	queryUser := fmt.Sprintf(`INSERT INTO "%s" (id) VALUES($1)`, userTablename)
+	queryUser := fmt.Sprintf(`INSERT INTO "%s" (id) VALUES($1) ON CONFLICT DO NOTHING`, userTablename)
 	queryShared := fmt.Sprintf(`INSERT INTO %s (event_id, user_id) VALUES($1, $2)`, sharedTablename)
 
 	tx, err := p.connection.Beginx()
 	if err != nil {
 		log.Error("Can't begin transaction", err)
-		return nil, err
+		return err
 	}
 	row := tx.QueryRowx(queryEvent, eventId, title, isDeleted)
 	if err = row.Err(); err != nil {
 		log.Errorf("Can't insert row: %v\n", err)
 		tx.Rollback()
-		return nil, err
+		return err
 	}
-	row = tx.QueryRowx(queryUser, userId)
-	if err = row.Err(); err != nil {
-		log.Errorf("Can't insert row: %v\n", err)
-		tx.Rollback()
-		return nil, err
-	}
-	row = tx.QueryRowx(queryShared, eventId, userId)
-	if err = row.Err(); err != nil {
-		log.Errorf("Can't insert row: %v\n", err)
-		tx.Rollback()
-		return nil, err
-	}
+  for _, u := range usersId {
+    row = tx.QueryRowx(queryUser, u)
+    if err = row.Err(); err != nil {
+      log.Errorf("Can't insert row: %v\n", err)
+      tx.Rollback()
+      return err
+    }
+    row = tx.QueryRowx(queryShared, eventId, u)
+    if err = row.Err(); err != nil {
+      log.Errorf("Can't insert row: %v\n", err)
+      tx.Rollback()
+      return err
+    }
+  }
 	if err = tx.Commit(); err != nil {
 		log.Errorf("Couldn't commit transaction", err)
 		tx.Rollback()
-		return nil, err
+		return err
 	}
 
-	return &responses.HistoryResponse{EventId: eventId, UserId: userId, EventTitle: title, IsDeleted: isDeleted}, nil
+	return nil
 }
 
 func (p *PostgresHistory) Get(userId string) ([]*responses.HistoryResponse, error) {

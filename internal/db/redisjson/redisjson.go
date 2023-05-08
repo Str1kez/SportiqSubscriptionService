@@ -52,9 +52,6 @@ func (r *ReJSONDB) createIndexes() {
 }
 
 func (r *ReJSONDB) Close() error {
-	if err := r.client.FlushAll(context.Background()).Err(); err != nil {
-		return err
-	}
 	if err := r.client.Close(); err != nil {
 		return err
 	}

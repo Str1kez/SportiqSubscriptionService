@@ -18,13 +18,24 @@ func (r *RabbitMQ) Consume(autoAck bool) {
 			log.Debugf("Consumer №%d received a message: %s\n", r.id, d.Body)
 			switch d.Type {
 			case "event.create":
+				if err := r.eventCreate(&d); err != nil {
+					log.Errorf("Couldn't create event: %v\n", err)
+				}
 			case "event.change":
+				if err := r.eventChange(&d); err != nil {
+					log.Errorf("Couldn't change events: %v\n", err)
+				}
 			case "event.complete":
+				if err := r.eventComplete(&d); err != nil {
+					log.Errorf("Couldn't complete events: %v\n", err)
+				}
 			case "event.delete":
+				if err := r.eventDelete(&d); err != nil {
+					log.Errorf("Couldn't delete events: %v\n", err)
+				}
 			default:
 				log.Errorf("Unrecognized type of message: %s\n", d.Type)
 			}
-			// TODO: business
 			log.Debugf("Done by consumer №%d\n", r.id)
 			d.Ack(false)
 		}

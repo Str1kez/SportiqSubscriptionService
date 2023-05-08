@@ -10,6 +10,7 @@ type subscription interface {
 	DeleteEvent(eventId string) error
 	CreateEvent(eventId, userId string) error
 	UpdateEventStatus(eventId, eventStatus string) error
+	GetUsers(eventId string) ([]string, error)
 	Close() error
 }
 

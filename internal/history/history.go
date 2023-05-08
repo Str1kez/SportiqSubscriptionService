@@ -8,7 +8,7 @@ import (
 )
 
 type history interface {
-	Create(eventId, title, userId string, isDeleted bool) (*responses.HistoryResponse, error)
+	Create(eventId string, title interface{}, usersId []string, isDeleted bool) error
 	Get(userId string) ([]*responses.HistoryResponse, error)
 	Close() error
 }

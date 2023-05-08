@@ -16,7 +16,7 @@ type creationModel struct {
 func (r *ReJSONDB) CreateEvent(eventId, userId string) error {
 	documentName := fmt.Sprintf("events:%s", eventId)
 	event := creationModel{Status: r.config.EventStatus.Planned, Users: []string{userId}}
-	res, err := r.handler.JSONSet(documentName, ".", event)
+	res, err := r.handler.JSONSet(documentName, ".", event) // ! need flag NX
 	if err != nil {
 		log.Errorf("Failed to JSONSet: %v\n", err)
 		return err
@@ -42,7 +42,7 @@ func (r *ReJSONDB) UpdateEventStatus(eventId, eventStatus string) error {
 		log.Panicf("Wrong event status in args: %v\n", err)
 		return err
 	}
-	res, err := r.handler.JSONSet(documentName, ".status", eventStatus)
+	res, err := r.handler.JSONSet(documentName, ".status", eventStatus) // ! need flag XX
 	if err != nil {
 		log.Errorf("Failed to JSONSet: %v\n", err)
 		return err
