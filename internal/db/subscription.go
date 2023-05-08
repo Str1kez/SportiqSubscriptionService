@@ -11,6 +11,9 @@ type subscription interface {
 	CreateEvent(eventId, userId string) error
 	UpdateEventStatus(eventId, eventStatus string) error
 	GetUsers(eventId string) ([]string, error)
+	Subscribe(userId, eventId string) error
+	Unsubscribe(userId, eventId string) error
+	CountSubscribers(eventId string) (uint, error)
 	Close() error
 }
 

@@ -25,8 +25,6 @@ services:
       interval: 1s
       timeout: 3s
       retries: 5
-    volumes:
-      - "db:/data"
     ports:
       - 6381:6379
       - 8010:8001  # TODO: Убрать после использования сервера
@@ -53,8 +51,6 @@ services:
     container_name: subscription_message_handler
     restart: unless-stopped
     env_file: .env
-    ports:  # TODO: надо ли?
-      - "${APP_PORT}:${APP_PORT}"
     depends_on:
       db:
         condition: service_healthy

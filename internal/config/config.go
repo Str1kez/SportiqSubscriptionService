@@ -45,14 +45,6 @@ type EventStatus struct {
 	Underway  string `mapstructure:"underway"`
 }
 
-// type ErrorConfig struct {
-// 	Completion string `mapstructure:"completion"`
-// 	Sending    string `mapstructure:"sending"`
-// 	Converting string `mapstructure:"converting"`
-// 	Parsing    string `mapstructure:"parsing"`
-// 	Context    string `mapstructure:"context"`
-// }
-
 func NewConfig() (*Config, error) {
 	var config Config
 
@@ -88,7 +80,7 @@ func NewConfig() (*Config, error) {
 		return nil, err
 	}
 
-	err = parseConfig()
+	err = parseEventConfig()
 	if err != nil {
 		log.Errorf("Error in parsing yaml config: %v\n", err)
 		return nil, err
@@ -98,7 +90,11 @@ func NewConfig() (*Config, error) {
 		log.Errorf("Error in unmarshalling yaml config: %v\n", err)
 		return nil, err
 	}
-
+	err = parseServerConfig()
+	if err != nil {
+		log.Errorf("Error in parsing yaml config: %v\n", err)
+		return nil, err
+	}
 	return &config, nil
 }
 
@@ -149,8 +145,14 @@ func parseEnv() error {
 	return nil
 }
 
-func parseConfig() error {
+func parseEventConfig() error {
 	viper.SetConfigName("event")
+	viper.AddConfigPath("config")
+	return viper.ReadInConfig()
+}
+
+func parseServerConfig() error {
+	viper.SetConfigName("server")
 	viper.AddConfigPath("config")
 	return viper.ReadInConfig()
 }

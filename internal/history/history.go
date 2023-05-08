@@ -2,14 +2,14 @@ package history
 
 import (
 	"github.com/Str1kez/SportiqSubscriptionService/internal/config"
+	"github.com/Str1kez/SportiqSubscriptionService/internal/dto"
 	"github.com/Str1kez/SportiqSubscriptionService/internal/history/postgres"
-	"github.com/Str1kez/SportiqSubscriptionService/internal/responses"
 	log "github.com/sirupsen/logrus"
 )
 
 type history interface {
 	Create(eventId string, title interface{}, usersId []string, isDeleted bool) error
-	Get(userId string) ([]*responses.HistoryResponse, error)
+	Get(userId string) ([]*dto.HistoryResponse, error)
 	Close() error
 }
 

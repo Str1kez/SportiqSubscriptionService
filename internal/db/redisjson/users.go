@@ -32,3 +32,13 @@ func (r *ReJSONDB) GetUsers(eventId string) ([]string, error) {
 	log.Debugf("%+v\n", users.Users)
 	return users.Users, nil
 }
+
+func (r *ReJSONDB) CountSubscribers(eventId string) (uint, error) {
+	documentName := fmt.Sprintf("events:%s", eventId)
+	res, err := r.handler.JSONArrLen(documentName, ".users")
+	if err != nil {
+		return 0, errors.New("не смог получить данные о количестве подписчиков")
+	}
+	convertedResult := res.(int64)
+	return uint(convertedResult), nil
+}

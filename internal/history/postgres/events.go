@@ -3,7 +3,7 @@ package postgres
 import (
 	"fmt"
 
-	"github.com/Str1kez/SportiqSubscriptionService/internal/responses"
+	"github.com/Str1kez/SportiqSubscriptionService/internal/dto"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -52,11 +52,11 @@ func (p *PostgresHistory) Create(eventId string, title interface{}, usersId []st
 	return nil
 }
 
-func (p *PostgresHistory) Get(userId string) ([]*responses.HistoryResponse, error) {
-	row_query := `SELECT %s.id AS id, title, is_deleted 
+func (p *PostgresHistory) Get(userId string) ([]*dto.HistoryResponse, error) {
+	row_query := `SELECT %s.id AS id, title 
                 FROM %s 
                 JOIN %s ON %s.event_id = %s.id 
-                WHERE %s.user_id = $1 
+                WHERE %s.user_id = $1 AND is_deleted = FALSE
                 ORDER BY %s.created_at DESC;`
 	query := fmt.Sprintf(row_query, eventTablename, eventTablename, sharedTablename,
 		sharedTablename, eventTablename, sharedTablename, eventTablename)
@@ -68,9 +68,9 @@ func (p *PostgresHistory) Get(userId string) ([]*responses.HistoryResponse, erro
 	defer rows.Close()
 
 	// ! Неоптимально, лучше сделать через транзакцию с проверкой на кол-во строк
-	response := make([]*responses.HistoryResponse, 0, 100)
+	response := make([]*dto.HistoryResponse, 0, 100)
 	for rows.Next() {
-		var temp responses.HistoryResponse
+		var temp dto.HistoryResponse
 		if err := rows.StructScan(&temp); err != nil {
 			log.Errorf("Can't parse row: %v\n", err)
 			return nil, err
