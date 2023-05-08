@@ -10,6 +10,7 @@ func (ctl *Controller) History(c *gin.Context) {
 	historyResponses, err := ctl.historyDB.Get(c.GetHeader("User"))
 	if err != nil {
 		ctl.errorResponse(c, http.StatusBadRequest, "subscription.history", err)
+		return
 	}
-	c.JSON(http.StatusOK, historyResponses)
+	ctl.response(c, http.StatusOK, historyResponses)
 }
