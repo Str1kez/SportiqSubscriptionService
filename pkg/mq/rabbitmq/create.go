@@ -17,7 +17,7 @@ func eventCreationValidate(request *eventCreationRequest) error {
 	if request.EventId == "" || request.UserId == "" {
 		return errors.New("message on event.create invalid")
 	}
-  return nil
+	return nil
 }
 
 func (r *RabbitMQ) eventCreate(message *amqp.Delivery) error {
@@ -25,12 +25,12 @@ func (r *RabbitMQ) eventCreate(message *amqp.Delivery) error {
 	if err := json.Unmarshal(message.Body, &event); err != nil {
 		return err
 	}
-  if err := eventCreationValidate(&event); err != nil {
-    return err
-  }
-  if err := r.subscriptionDB.CreateEvent(event.EventId, event.UserId); err != nil {
-    return err
-  }
+	if err := eventCreationValidate(&event); err != nil {
+		return err
+	}
+	if err := r.subscriptionDB.CreateEvent(event.EventId, event.UserId); err != nil {
+		return err
+	}
 	log.Debugf("Handled event.create message: %+v\n", event)
 	return nil
 }

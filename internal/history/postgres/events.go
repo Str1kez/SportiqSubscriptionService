@@ -29,20 +29,20 @@ func (p *PostgresHistory) Create(eventId string, title interface{}, usersId []st
 		tx.Rollback()
 		return err
 	}
-  for _, u := range usersId {
-    row = tx.QueryRowx(queryUser, u)
-    if err = row.Err(); err != nil {
-      log.Errorf("Can't insert row: %v\n", err)
-      tx.Rollback()
-      return err
-    }
-    row = tx.QueryRowx(queryShared, eventId, u)
-    if err = row.Err(); err != nil {
-      log.Errorf("Can't insert row: %v\n", err)
-      tx.Rollback()
-      return err
-    }
-  }
+	for _, u := range usersId {
+		row = tx.QueryRowx(queryUser, u)
+		if err = row.Err(); err != nil {
+			log.Errorf("Can't insert row: %v\n", err)
+			tx.Rollback()
+			return err
+		}
+		row = tx.QueryRowx(queryShared, eventId, u)
+		if err = row.Err(); err != nil {
+			log.Errorf("Can't insert row: %v\n", err)
+			tx.Rollback()
+			return err
+		}
+	}
 	if err = tx.Commit(); err != nil {
 		log.Errorf("Couldn't commit transaction", err)
 		tx.Rollback()

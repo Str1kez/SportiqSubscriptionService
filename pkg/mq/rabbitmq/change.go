@@ -29,9 +29,9 @@ func (r *RabbitMQ) eventChange(message *amqp.Delivery) error {
 		return err
 	}
 	for _, e := range event.Events {
-	  if err := r.subscriptionDB.UpdateEventStatus(e, event.Status); err != nil {
-      log.Errorf("Error in event [%s] updating: %v\n", e, err)
-	  }
+		if err := r.subscriptionDB.UpdateEventStatus(e, event.Status); err != nil {
+			log.Errorf("Error in event [%s] updating: %v\n", e, err)
+		}
 	}
 	log.Debugf("Handled event.change message: %+v\n", event)
 	return nil
