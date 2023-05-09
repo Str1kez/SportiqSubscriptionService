@@ -20,7 +20,7 @@ func (p *PostgresHistory) Create(eventId string, title interface{}, usersId []st
 
 	tx, err := p.connection.Beginx()
 	if err != nil {
-		log.Error("Can't begin transaction", err)
+		log.Errorf("Can't begin transaction: %v\n", err)
 		return err
 	}
 	row := tx.QueryRowx(queryEvent, eventId, title, isDeleted)
@@ -44,7 +44,7 @@ func (p *PostgresHistory) Create(eventId string, title interface{}, usersId []st
 		}
 	}
 	if err = tx.Commit(); err != nil {
-		log.Errorf("Couldn't commit transaction", err)
+		log.Errorf("Couldn't commit transaction: %v\n", err)
 		tx.Rollback()
 		return err
 	}
