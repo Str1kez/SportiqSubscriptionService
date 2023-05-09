@@ -49,8 +49,11 @@ func (r *ReJSONDB) Unsubscribe(userId, eventId string) error {
 		return errors.New("не смог рассмотреть подписчиков события")
 	}
 	indexConverted := index.(int64)
-	if indexConverted == -1 {
+	switch indexConverted {
+	case -1:
 		return errors.New("вы не подписаны на это событие")
+	case 0:
+		return errors.New("нельзя отписаться от своего события")
 	}
 	event, err := r.handler.JSONGet(documentName, ".status")
 	if err != nil {

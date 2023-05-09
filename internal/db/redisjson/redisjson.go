@@ -38,7 +38,7 @@ func (r *ReJSONDB) healthCheck() {
 }
 
 func (r *ReJSONDB) createIndexes() {
-	query := "FT.CREATE idx:events ON JSON PREFIX 1 \"events:\" SCHEMA $.status AS status TAG $.users[*] as user_id TAG"
+	query := "FT.CREATE idx:events ON JSON PREFIX 1 events: SCHEMA $.status AS status TAG $.users[*] as user_id TAG"
 	querySlice := strings.Split(query, " ")
 	q := make([]interface{}, len(querySlice))
 	for i, v := range querySlice {

@@ -31,6 +31,7 @@ func (h *HttpServer) InitRouters() *gin.Engine {
 		apiRouter.POST("/unsubscribe/:event_id", h.controller.Unsubscribe)
 		apiRouter.GET("/subscribers/count/:event_id", h.controller.SubscribersCount)
 		apiRouter.GET("/history", h.controller.History)
+		apiRouter.GET("/subscriptions", h.controller.Subscriptions)
 	}
 
 	return router

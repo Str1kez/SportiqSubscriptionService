@@ -3,6 +3,7 @@ package db
 import (
 	"github.com/Str1kez/SportiqSubscriptionService/internal/config"
 	"github.com/Str1kez/SportiqSubscriptionService/internal/db/redisjson"
+	"github.com/Str1kez/SportiqSubscriptionService/internal/dto"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -11,6 +12,7 @@ type subscription interface {
 	CreateEvent(eventId, userId string) error
 	UpdateEventStatus(eventId, eventStatus string) error
 	GetUsers(eventId string) ([]string, error)
+	GetEvents(userId string) ([]dto.SubscriptionResponse, error)
 	Subscribe(userId, eventId string) error
 	Unsubscribe(userId, eventId string) error
 	CountSubscribers(eventId string) (uint, error)

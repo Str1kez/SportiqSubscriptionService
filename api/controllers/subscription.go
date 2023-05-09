@@ -50,3 +50,12 @@ func (ctl *Controller) SubscribersCount(c *gin.Context) {
 	}
 	ctl.response(c, http.StatusOK, gin.H{"event_id": eventId.Id, "subscribersCount": count})
 }
+
+func (ctl *Controller) Subscriptions(c *gin.Context) {
+	subscriptions, err := ctl.subscriptionDB.GetEvents(c.GetHeader("User"))
+	if err != nil {
+		ctl.errorResponse(c, http.StatusBadRequest, "subscription.subscriptions", err)
+		return
+	}
+	ctl.response(c, http.StatusOK, subscriptions)
+}
