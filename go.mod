@@ -13,6 +13,7 @@ require (
 	github.com/sirupsen/logrus v1.9.0
 	github.com/spf13/viper v1.15.0
 	github.com/toorop/gin-logrus v0.0.0-20210225092905-2c785434f26f
+	github.com/webstradev/gin-pagination v1.0.1
 )
 
 require (

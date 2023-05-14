@@ -52,18 +52,36 @@ func (p *PostgresHistory) Create(eventId string, title interface{}, usersId []st
 	return nil
 }
 
-func (p *PostgresHistory) Get(userId string) ([]*dto.HistoryResponse, error) {
+func (p *PostgresHistory) Get(userId string, size, page int) ([]*dto.HistoryResponse, int, error) {
 	row_query := `SELECT %s.id AS id, title 
                 FROM %s 
                 JOIN %s ON %s.event_id = %s.id 
                 WHERE %s.user_id = $1 AND is_deleted = FALSE
-                ORDER BY %s.created_at DESC;`
+                ORDER BY %s.created_at DESC
+                LIMIT $2 OFFSET $3;`
+	totalCountQuery := `SELECT COUNT(*)
+                FROM %s 
+                JOIN %s ON %s.event_id = %s.id 
+                WHERE %s.user_id = $1 AND is_deleted = FALSE;`
+	var totalCount int
+	countQuery := fmt.Sprintf(totalCountQuery, eventTablename, sharedTablename, sharedTablename, eventTablename, sharedTablename)
+	row := p.connection.QueryRowx(countQuery, userId)
+	if err := row.Err(); err != nil {
+		log.Errorf("Couldn't get total count: %v\n", err)
+		return nil, 0, err
+	}
+
+	if err := row.Scan(&totalCount); err != nil {
+		log.Errorf("Couldn't scan total count: %v\n", err)
+		return nil, 0, err
+	}
+
 	query := fmt.Sprintf(row_query, eventTablename, eventTablename, sharedTablename,
 		sharedTablename, eventTablename, sharedTablename, eventTablename)
-	rows, err := p.connection.Queryx(query, userId)
+	rows, err := p.connection.Queryx(query, userId, size, (page-1)*size)
 	if err != nil {
 		log.Errorf("Couldn't get rows: %v\n", err)
-		return nil, err
+		return nil, 0, err
 	}
 	defer rows.Close()
 
@@ -73,9 +91,9 @@ func (p *PostgresHistory) Get(userId string) ([]*dto.HistoryResponse, error) {
 		var temp dto.HistoryResponse
 		if err := rows.StructScan(&temp); err != nil {
 			log.Errorf("Can't parse row: %v\n", err)
-			return nil, err
+			return nil, 0, err
 		}
 		response = append(response, &temp)
 	}
-	return response, nil
+	return response, totalCount, nil
 }

@@ -9,7 +9,7 @@ import (
 
 type history interface {
 	Create(eventId string, title interface{}, usersId []string, isDeleted bool) error
-	Get(userId string) ([]*dto.HistoryResponse, error)
+	Get(userId string, size, page int) ([]*dto.HistoryResponse, int, error)
 	Close() error
 }
 

@@ -10,6 +10,7 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	ginlogrus "github.com/toorop/gin-logrus"
+	pagination "github.com/webstradev/gin-pagination"
 )
 
 type HttpServer struct {
@@ -23,14 +24,17 @@ func InitHttpServer(subDB *db.SubscriptionDB, historyDB *history.HistoryDB) *Htt
 func (h *HttpServer) InitRouters() *gin.Engine {
 	router := gin.New()
 	router.HandleMethodNotAllowed = true
-	router.Use(ginlogrus.Logger(log.StandardLogger()), gin.Recovery(), middlewares.UserMiddleware(), cors.Default())
+	config := cors.DefaultConfig()
+	config.AllowAllOrigins = true
+	config.ExposeHeaders = []string{"x-total-count"}
+	router.Use(ginlogrus.Logger(log.StandardLogger()), gin.Recovery(), cors.New(config), middlewares.UserMiddleware())
 
 	apiRouter := router.Group(viper.GetString("prefix"))
 	{
 		apiRouter.POST("/subscribe/:event_id", h.controller.Subscribe)
 		apiRouter.POST("/unsubscribe/:event_id", h.controller.Unsubscribe)
 		apiRouter.GET("/subscribers/count/:event_id", h.controller.SubscribersCount)
-		apiRouter.GET("/history", h.controller.History)
+		apiRouter.GET("/history", pagination.Default(), h.controller.History)
 		apiRouter.GET("/subscriptions", h.controller.Subscriptions)
 	}
 

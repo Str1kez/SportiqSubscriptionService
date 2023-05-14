@@ -60,7 +60,7 @@ func (r *ReJSONDB) UpdateEventStatus(eventId, eventStatus string) error {
 
 func (r *ReJSONDB) GetEvents(userId string) ([]dto.SubscriptionResponse, error) {
 	escapedUserId := tools.EscapeUUID(userId)
-	query := fmt.Sprintf(`FT.SEARCH idx:events @user_id:{%s} RETURN 1 status`, escapedUserId)
+	query := fmt.Sprintf(`FT.SEARCH idx:events @user_id:{%s} RETURN 1 status LIMIT 0 10000`, escapedUserId)
 	querySlice := strings.Split(query, " ")
 	q := make([]interface{}, len(querySlice))
 	for i, v := range querySlice {
