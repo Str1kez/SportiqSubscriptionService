@@ -262,7 +262,7 @@ const docTemplate = `{
         "dto.SubscriptionResponse": {
             "type": "object",
             "properties": {
-                "eventId": {
+                "event_id": {
                     "type": "string"
                 },
                 "status": {
@@ -295,7 +295,7 @@ const docTemplate = `{
         "responses.SubscriptionCountResponse": {
             "type": "object",
             "properties": {
-                "eventId": {
+                "event_id": {
                     "type": "string"
                 },
                 "subscribersCount": {

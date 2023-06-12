@@ -255,7 +255,7 @@
         "dto.SubscriptionResponse": {
             "type": "object",
             "properties": {
-                "eventId": {
+                "event_id": {
                     "type": "string"
                 },
                 "status": {
@@ -288,7 +288,7 @@
         "responses.SubscriptionCountResponse": {
             "type": "object",
             "properties": {
-                "eventId": {
+                "event_id": {
                     "type": "string"
                 },
                 "subscribersCount": {
