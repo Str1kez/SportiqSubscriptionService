@@ -21,6 +21,16 @@ func InitHttpServer(subDB *db.SubscriptionDB, historyDB *history.HistoryDB) *Htt
 	return &HttpServer{controller: controllers.InitController(subDB, historyDB)}
 }
 
+// @title Sportiq Subscription API
+// @version 0.1.0
+// @description Subscription microservice for Sportiq Project
+// @contact.name Str1kez
+// @contact.url https://github.com/Str1kez
+// @host localhost:8002
+// @BasePath /api/v1/subscription
+// @securityDefinitions.apikey UserID
+// @in header
+// @name User
 func (h *HttpServer) InitRouters() *gin.Engine {
 	router := gin.New()
 	router.HandleMethodNotAllowed = true

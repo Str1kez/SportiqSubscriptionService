@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"github.com/Str1kez/SportiqSubscriptionService/api/responses"
 	"github.com/Str1kez/SportiqSubscriptionService/internal/db"
 	"github.com/Str1kez/SportiqSubscriptionService/internal/history"
 	"github.com/gin-gonic/gin"
@@ -24,8 +25,6 @@ func (ctl *Controller) response(c *gin.Context, status int, data interface{}) {
 }
 
 func (ctl *Controller) errorResponse(c *gin.Context, status int, errorType string, err error) {
-	detail := []gin.H{{"msg": err.Error(), "type": errorType}}
-	c.AbortWithStatusJSON(status, gin.H{
-		"detail": detail,
-	})
+	response := responses.ErrorResponse{Detail: []responses.ErrorInfo{{Msg: err.Error(), Type: errorType}}}
+	c.AbortWithStatusJSON(status, response)
 }

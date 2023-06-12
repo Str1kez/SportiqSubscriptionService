@@ -1,6 +1,6 @@
 package dto
 
 type SubscriptionResponse struct {
-	EventId string `json:"event_id"`
+	EventId string `json:"eventId"`
 	Status  string `json:"status"`
 }

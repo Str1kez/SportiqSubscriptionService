@@ -1,0 +1,198 @@
+basePath: /api/v1/subscription
+definitions:
+  dto.HistoryResponse:
+    properties:
+      event_id:
+        type: string
+      event_title:
+        type: string
+      user_id:
+        type: string
+    type: object
+  dto.SubscriptionResponse:
+    properties:
+      eventId:
+        type: string
+      status:
+        type: string
+    type: object
+  responses.ErrorInfo:
+    properties:
+      msg:
+        type: string
+      type:
+        type: string
+    type: object
+  responses.ErrorResponse:
+    properties:
+      detail:
+        items:
+          $ref: '#/definitions/responses.ErrorInfo'
+        type: array
+    type: object
+  responses.SubscriptionCountResponse:
+    properties:
+      eventId:
+        type: string
+      subscribersCount:
+        type: integer
+    type: object
+host: localhost:8002
+info:
+  contact:
+    name: Str1kez
+    url: https://github.com/Str1kez
+  description: Subscription microservice for Sportiq Project
+  title: Sportiq Subscription API
+  version: 0.1.0
+paths:
+  /history:
+    get:
+      description: Show history with pagination
+      operationId: history
+      parameters:
+      - default: 1
+        description: page number
+        in: query
+        minimum: 1
+        name: page
+        type: integer
+      - default: 10
+        description: page size
+        in: query
+        maximum: 100
+        minimum: 10
+        name: size
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          headers:
+            X-Total-Count:
+              description: "500"
+              type: int
+          schema:
+            items:
+              $ref: '#/definitions/dto.HistoryResponse'
+            type: array
+      security:
+      - UserID: []
+      summary: History
+      tags:
+      - history
+  /subscribe/{event_id}:
+    post:
+      description: Subscription on event
+      operationId: subscribe
+      parameters:
+      - description: UUID of event
+        in: path
+        name: event_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: subscribed
+        "400":
+          description: subscription is unavailable
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "422":
+          description: invalid id of event
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      security:
+      - UserID: []
+      summary: Subscribe
+      tags:
+      - subscription
+  /subscribers/count/{event_id}:
+    get:
+      description: Returns count of subscribers on event
+      operationId: subcount
+      parameters:
+      - description: UUID of event
+        in: path
+        name: event_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            $ref: '#/definitions/responses.SubscriptionCountResponse'
+        "400":
+          description: count is unavailable
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "422":
+          description: invalid id of event
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      security:
+      - UserID: []
+      summary: Subscriptions Count
+      tags:
+      - subscription
+  /subscriptions:
+    get:
+      description: Returns info about current state of subscriptions
+      operationId: subinfo
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+          schema:
+            items:
+              $ref: '#/definitions/dto.SubscriptionResponse'
+            type: array
+        "400":
+          description: subscriptions are unavailable
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      security:
+      - UserID: []
+      summary: Subscription Info
+      tags:
+      - subscription
+  /unsubscribe/{event_id}:
+    post:
+      description: Unsubscription from event
+      operationId: unsubscribe
+      parameters:
+      - description: UUID of event
+        in: path
+        name: event_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: success
+        "400":
+          description: subscription is unavailable
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+        "422":
+          description: invalid id of event
+          schema:
+            $ref: '#/definitions/responses.ErrorResponse'
+      security:
+      - UserID: []
+      summary: Unsubscribe
+      tags:
+      - subscription
+securityDefinitions:
+  UserID:
+    in: header
+    name: User
+    type: apiKey
+swagger: "2.0"

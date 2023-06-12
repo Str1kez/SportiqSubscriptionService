@@ -3,6 +3,7 @@ package controllers
 import (
 	"net/http"
 
+	"github.com/Str1kez/SportiqSubscriptionService/api/responses"
 	"github.com/gin-gonic/gin"
 )
 
@@ -10,6 +11,17 @@ type eventIdPath struct {
 	Id string `uri:"event_id" binding:"required,uuid"`
 }
 
+// @Summary Subscribe
+// @ID subscribe
+// @Description Subscription on event
+// @Tags subscription
+// @Security UserID
+// @Param event_id path string true "UUID of event"
+// @Produce json
+// @Success 201 "subscribed"
+// @Failure 422 {object} responses.ErrorResponse "invalid id of event"
+// @Failure 400 {object} responses.ErrorResponse "subscription is unavailable"
+// @Router /subscribe/{event_id} [post]
 func (ctl *Controller) Subscribe(c *gin.Context) {
 	eventId := eventIdPath{}
 	if err := c.ShouldBindUri(&eventId); err != nil {
@@ -23,6 +35,17 @@ func (ctl *Controller) Subscribe(c *gin.Context) {
 	ctl.response(c, http.StatusCreated, nil)
 }
 
+// @Summary Unsubscribe
+// @ID unsubscribe
+// @Description Unsubscription from event
+// @Tags subscription
+// @Security UserID
+// @Param event_id path string true "UUID of event"
+// @Produce json
+// @Success 200 "success"
+// @Failure 422 {object} responses.ErrorResponse "invalid id of event"
+// @Failure 400 {object} responses.ErrorResponse "subscription is unavailable"
+// @Router /unsubscribe/{event_id} [post]
 func (ctl *Controller) Unsubscribe(c *gin.Context) {
 	eventId := eventIdPath{}
 	if err := c.ShouldBindUri(&eventId); err != nil {
@@ -36,6 +59,17 @@ func (ctl *Controller) Unsubscribe(c *gin.Context) {
 	ctl.response(c, http.StatusOK, nil)
 }
 
+// @Summary Subscriptions Count
+// @ID subcount
+// @Description Returns count of subscribers on event
+// @Tags subscription
+// @Security UserID
+// @Param event_id path string true "UUID of event"
+// @Produce json
+// @Success 200 {object} responses.SubscriptionCountResponse "success"
+// @Failure 422 {object} responses.ErrorResponse "invalid id of event"
+// @Failure 400 {object} responses.ErrorResponse "count is unavailable"
+// @Router /subscribers/count/{event_id} [get]
 func (ctl *Controller) SubscribersCount(c *gin.Context) {
 	eventId := eventIdPath{}
 	if err := c.ShouldBindUri(&eventId); err != nil {
@@ -48,9 +82,18 @@ func (ctl *Controller) SubscribersCount(c *gin.Context) {
 		ctl.errorResponse(c, http.StatusBadRequest, "subscription.subscribers_count", err)
 		return
 	}
-	ctl.response(c, http.StatusOK, gin.H{"event_id": eventId.Id, "subscribersCount": count})
+	ctl.response(c, http.StatusOK, responses.SubscriptionCountResponse{EventId: eventId.Id, SubscribersCount: count})
 }
 
+// @Summary Subscription Info
+// @ID subinfo
+// @Description Returns info about current state of subscriptions
+// @Tags subscription
+// @Security UserID
+// @Produce json
+// @Success 200 {array} dto.SubscriptionResponse "success"
+// @Failure 400 {object} responses.ErrorResponse "subscriptions are unavailable"
+// @Router /subscriptions [get]
 func (ctl *Controller) Subscriptions(c *gin.Context) {
 	subscriptions, err := ctl.subscriptionDB.GetEvents(c.GetHeader("User"))
 	if err != nil {
