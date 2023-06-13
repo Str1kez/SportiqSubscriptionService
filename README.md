@@ -12,6 +12,10 @@ This microservice is responsible for consuming messages from queue and processin
 - [Event Service](https://github.com/Str1kez/SportiqEventService)
 - [Frontend App](https://github.com/Str1kez/SportiqReactApp)
 
+## Documentation
+
+OpenAPI - https://str1kez.github.io/SportiqSubscriptionService
+
 ## Message handler
 
 Message handler is based on Rabbit MQ, has `N` parallel workers on goroutines. Variable can be set in `.env`. \
